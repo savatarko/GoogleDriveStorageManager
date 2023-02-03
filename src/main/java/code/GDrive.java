@@ -40,6 +40,7 @@ import java.util.*;
 
 //import java.io.File;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 public class GDrive extends StorageManager {
 
@@ -72,7 +73,7 @@ public class GDrive extends StorageManager {
     private long currentsize;
 
     //gets the file from the given path
-    private FileList GetFromPath(String path) throws MyFileNotFoundException
+    public FileList GetFromPath(String path) throws MyFileNotFoundException
     {
         String[] split = path.split("/");
         String parent = "root";
@@ -88,8 +89,8 @@ public class GDrive extends StorageManager {
                             .setFields("nextPageToken, files(id, name, createdTime, modifiedTime, size)")
                             .execute();
                     if (result.getFiles().size() == 0) {
-                        throw new MyFileNotFoundException(path);
-                        //return null;
+                        //throw new MyFileNotFoundException(path);
+                        return null;
                     }
                     parent = result.getFiles().get(0).getId();
                 }
@@ -103,8 +104,8 @@ public class GDrive extends StorageManager {
                         .setFields("nextPageToken, files(id, name, createdTime, modifiedTime, size, parents)")
                         .execute();
                 if (result.getFiles().size() == 0) {
-                    throw new MyFileNotFoundException(path);
-                    //return null;
+                    //throw new MyFileNotFoundException(path);
+                    return null;
                 }
                 parent = result.getFiles().get(0).getId();
             }
@@ -934,10 +935,10 @@ public class GDrive extends StorageManager {
     }
 
     @Override
-    public void CreateDirectory(String path, String name) {
+    public void CreateDirectory(String path, String name) throws IOException{
         try{
         FileList fileList = GetFromPath(path);
-        if(fileList.getFiles() == null)
+        if(fileList == null)
         {
             throw new FileNotFoundException(path);
         }
@@ -961,8 +962,7 @@ public class GDrive extends StorageManager {
                     .setFields("id, parents")
                     .execute();
         }
-        catch (Exception e)
-        {
+        catch (FileAlreadyExistsException e){
             e.printStackTrace();
         }
     }
@@ -1321,7 +1321,7 @@ public class GDrive extends StorageManager {
 
     @Override
     public List<MyFile> GetFilesType(String extension) {
-        List<String> ext = Arrays.stream(extension.split(",")).toList();
+        List<String> ext = Arrays.stream(extension.split(",")).collect(Collectors.toList());
         List<MyFile> output = new ArrayList<>();
         List<String> idqueue = new ArrayList<>();
         try {

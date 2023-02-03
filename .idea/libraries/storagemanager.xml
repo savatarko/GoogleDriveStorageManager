@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="storagemanager">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../StorageManager/src/main/java" />
+    </SOURCES>
+  </library>
+</component>

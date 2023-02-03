@@ -1,0 +1,3 @@
+maxsize=9223372036854775807
+forbidden=[]
+ogranicen dir|15
