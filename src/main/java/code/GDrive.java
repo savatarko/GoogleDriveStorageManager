@@ -1069,8 +1069,7 @@ public class GDrive extends StorageManager {
     }
 
     @Override
-    public void DeleteFromStorage(String s) {
-        try {
+    public void DeleteFromStorage(String s) throws IOException{
             FileList fileList = GetFromPath(s);
             if(fileList == null)
             {
@@ -1081,11 +1080,6 @@ public class GDrive extends StorageManager {
                     .delete(fileList.getFiles().get(0).getId())
                     .execute();
             currentsize -=size;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 
     @Override
