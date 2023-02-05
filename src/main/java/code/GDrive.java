@@ -72,6 +72,7 @@ public class GDrive extends StorageManager {
 
     private long currentsize;
 
+
     //gets the file from the given path
     public FileList GetFromPath(String path) throws MyFileNotFoundException
     {
@@ -140,6 +141,8 @@ public class GDrive extends StorageManager {
     private Map<String, String> extmap = new HashMap<>();
 
     public GDrive() {
+        currentsize = 0;
+        currentconfig = defaultconfig;
         extmap.put(".323", "text/h323");
         extmap.put(".3g2", "video/3gpp2");
         extmap.put(".3gp", "video/3gpp");
@@ -1035,8 +1038,7 @@ public class GDrive extends StorageManager {
     }
 
     @Override
-    public void StoreFile(String path, MyFile myFile) {
-        try{
+    public void StoreFile(String path, MyFile myFile) throws IOException{
         if(Long.parseLong(myFile.getSize()) + currentsize > currentconfig.getMaxsize()){
             throw new StorageSizeLimitException("");
         }
@@ -1060,11 +1062,6 @@ public class GDrive extends StorageManager {
                     .create(file, content)
                     .setFields("id, parents")
                     .execute();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
 
     }
 
@@ -1075,16 +1072,17 @@ public class GDrive extends StorageManager {
             {
                 throw new FileNotFoundException();
             }
-            long size = fileList.getFiles().get(0).getSize();
+            if(Objects.isNull(fileList.getFiles().get(0).size())) {
+                long size = fileList.getFiles().get(0).getSize();
+                currentsize -=size;
+            }
             service.files()
                     .delete(fileList.getFiles().get(0).getId())
                     .execute();
-            currentsize -=size;
     }
 
     @Override
-    public void MoveFile(String oldpath, String newpath) {
-        try {
+    public void MoveFile(String oldpath, String newpath) throws IOException{
         FileList oldlist = GetFromPath(oldpath);
         FileList newlist = GetFromPath(newpath);
             /*
@@ -1108,11 +1106,6 @@ public class GDrive extends StorageManager {
                     .setRemoveParents(oldlist.getFiles().get(0).getParents().get(0))
                     .execute();
 
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -1159,7 +1152,7 @@ public class GDrive extends StorageManager {
 
             FileList result = service.files().list()
                     .setQ("parents = '" + fileList.getFiles().get(0).getId() + "' and trashed = false")
-                    .setFields("nextPageToken, files(id, name, createdTime, modifiedTime)")
+                    .setFields("nextPageToken, files(id, name, parents, fileExtension, createdTime, modifiedTime, size, mimeType)")
                     .execute();
             List<File> files = result.getFiles();
                 for (File file : files) {

@@ -41,12 +41,15 @@ public class CreateDirectoryUnitTest {
         gDrive = new GDrive();
     }
 
+    @MockBean
+    private Drive mockDrive;
+
 
 
     @Test
     public void folderNotFoundTest() {
 
-        Drive mockDrive = Mockito.mock(Drive.class);
+        //Drive mockDrive = Mockito.mock(Drive.class);
         //FileList mockFileList = Mockito.mock(FileList.class);
         Drive.Files mockFiles = Mockito.mock(Drive.Files.class);
         Drive.Files.List mockList = Mockito.mock(Drive.Files.List.class);
@@ -67,6 +70,18 @@ public class CreateDirectoryUnitTest {
         assertThrows(Exception.class, () -> {
             gDrive.CreateDirectory("Test", "test");
         });
+        try {
+            verify(mockDrive, times(0)).files();
+            verify(mockFiles, times(0)).list();
+            verify(mockList, times(0)).setQ(anyString());
+            verify(mockList, times(0)).setPageSize(anyInt());
+            verify(mockList, times(0)).setFields(anyString());
+            verify(mockList, times(0)).execute();
+            verify(mockfilelist, times(0)).getFiles();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Test
