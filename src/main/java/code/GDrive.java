@@ -704,6 +704,11 @@ public class GDrive extends StorageManager {
         extmap.put(".zip", "application/x-zip-compressed");
     }
 
+    public GDrive(Drive drive){
+        this();
+        this.service = drive;
+    }
+
     static {
 
         sm = new GDrive();

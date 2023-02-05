@@ -7,11 +7,14 @@ import com.google.api.services.drive.model.FileList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -30,22 +33,28 @@ public class MoveFileTest {
 
     private static GDrive gDrive;
 
-    //@MockBean
-    //private Drive driveService;
+    @Mock
+    private Drive mockDrive;
 
+    /*
     @BeforeAll
     public static void setUp() {
         gDrive = new GDrive();
     }
 
+     */
+
     @Test
     public void test(){
         Drive mockDrive = Mockito.mock(Drive.class);
         //FileList mockFileList = Mockito.mock(FileList.class);
+        gDrive = new GDrive(mockDrive);
         Drive.Files mockFiles = Mockito.mock(Drive.Files.class);
         Drive.Files.List mockList = Mockito.mock(Drive.Files.List.class);
         FileList mockfilelist = mock(FileList.class);
         File mockfile = mock(File.class);
+        when(mockfile.getParents()).thenReturn(new ArrayList<>(List.of("123")));
+        when(mockDrive.files()).thenReturn(mockFiles);
         //List<File> mockfilelist1 = mock(List.class);
         List<File> mockfilelist1 = new ArrayList<>();
         mockfilelist1.add(mockfile);

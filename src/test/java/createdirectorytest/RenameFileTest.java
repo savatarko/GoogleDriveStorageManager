@@ -30,17 +30,11 @@ public class RenameFileTest {
 
     private static GDrive gDrive;
 
-    //@MockBean
-    //private Drive driveService;
-
-    @BeforeAll
-    public static void setUp() {
-        gDrive = new GDrive();
-    }
 
     @Test
     public void test(){
         Drive mockDrive = Mockito.mock(Drive.class);
+        gDrive = new GDrive(mockDrive);
         //FileList mockFileList = Mockito.mock(FileList.class);
         Drive.Files mockFiles = Mockito.mock(Drive.Files.class);
         Drive.Files.List mockList = Mockito.mock(Drive.Files.List.class);
